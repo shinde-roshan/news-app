@@ -5,12 +5,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
@@ -33,7 +37,9 @@ fun HomeScreen(
 ) {
     val viewModel: HomeScreenViewModel = viewModel()
     when (viewModel.homeUiState.value) {
-        HomeScreenUiState.Loading -> {}
+        HomeScreenUiState.Loading -> {
+            LoadingScreen(modifier = Modifier.fillMaxSize())
+        }
         is HomeScreenUiState.Error -> {}
         is HomeScreenUiState.Success -> {
             NewsList(
@@ -112,6 +118,26 @@ fun NewsRow(
         }
     }
 
+}
+
+@Composable
+fun LoadingScreen(modifier: Modifier = Modifier) {
+    Column (
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(dimensionResource(R.dimen.dp_60)),
+            color = MaterialTheme.colorScheme.secondary,
+            trackColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+        Text(
+            text = stringResource(R.string.loading_please_wait),
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.padding(top = dimensionResource(R.dimen.dp_8))
+        )
+    }
 }
 
 @Preview(showBackground = true)

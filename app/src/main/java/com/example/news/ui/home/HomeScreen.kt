@@ -31,7 +31,7 @@ import com.example.news.ui.theme.NewsTheme
 fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
-    val newsList = NewsRepository().getSampleNews()
+    val newsList = emptyList<News>()
     NewsList(
         newsList,
         modifier = modifier

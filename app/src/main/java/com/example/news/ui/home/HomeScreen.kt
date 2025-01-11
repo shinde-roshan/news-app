@@ -23,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
@@ -40,12 +41,24 @@ fun HomeScreen(
         HomeScreenUiState.Loading -> {
             LoadingScreen(modifier = Modifier.fillMaxSize())
         }
-        is HomeScreenUiState.Error -> {}
-        is HomeScreenUiState.Success -> {
-            NewsList(
-                newsList = (viewModel.homeUiState.value as HomeScreenUiState.Success).news,
-                modifier = modifier
+
+        is HomeScreenUiState.Error -> {
+            ErrorScreen(
+                msg = (viewModel.homeUiState.value as HomeScreenUiState.Error).msg,
+                modifier = Modifier.fillMaxSize()
             )
+        }
+
+        is HomeScreenUiState.Success -> {
+            val newsList = (viewModel.homeUiState.value as HomeScreenUiState.Success).news
+            if (newsList.isEmpty()) {
+                EmptyScreen(modifier = Modifier.fillMaxSize())
+            } else {
+                NewsList(
+                    newsList = newsList,
+                    modifier = modifier
+                )
+            }
         }
     }
 }
@@ -122,7 +135,7 @@ fun NewsRow(
 
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier) {
-    Column (
+    Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -135,7 +148,50 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
         Text(
             text = stringResource(R.string.loading_please_wait),
             style = MaterialTheme.typography.titleSmall,
-            modifier = Modifier.padding(top = dimensionResource(R.dimen.dp_8))
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(dimensionResource(R.dimen.dp_8))
+        )
+    }
+}
+
+@Composable
+fun ErrorScreen(msg: String?, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            modifier = Modifier.size(dimensionResource(R.dimen.dp_60)),
+            painter = painterResource(R.drawable.ic_error),
+            contentDescription = null
+        )
+        Text(
+            text = if (!msg.isNullOrEmpty()) msg else stringResource(R.string.failed),
+            style = MaterialTheme.typography.titleSmall,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(dimensionResource(R.dimen.dp_8))
+        )
+    }
+}
+
+@Composable
+fun EmptyScreen(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            modifier = Modifier.size(dimensionResource(R.dimen.dp_60)),
+            painter = painterResource(R.drawable.ic_empty),
+            contentDescription = null
+        )
+        Text(
+            text = stringResource(R.string.no_records),
+            style = MaterialTheme.typography.titleSmall,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(dimensionResource(R.dimen.dp_8))
         )
     }
 }

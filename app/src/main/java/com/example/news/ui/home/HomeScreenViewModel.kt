@@ -9,7 +9,7 @@ import com.example.news.data.repository.NewsRepository
 import kotlinx.coroutines.launch
 import java.io.IOException
 
-class HomeScreenViewModel(private val newsRepository: NewsRepository): ViewModel() {
+class HomeScreenViewModel(private val newsRepository: NewsRepository = NewsRepository()): ViewModel() {
     private var _homeUiState: MutableState<HomeScreenUiState> =
         mutableStateOf(HomeScreenUiState.Loading)
     val homeUiState: MutableState<HomeScreenUiState> = _homeUiState

@@ -22,20 +22,26 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.news.R
 import com.example.news.data.model.News
-import com.example.news.data.repository.NewsRepository
 import com.example.news.ui.theme.NewsTheme
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
-    val newsList = emptyList<News>()
-    NewsList(
-        newsList,
-        modifier = modifier
-    )
+    val viewModel: HomeScreenViewModel = viewModel()
+    when (viewModel.homeUiState.value) {
+        HomeScreenUiState.Loading -> {}
+        is HomeScreenUiState.Error -> {}
+        is HomeScreenUiState.Success -> {
+            NewsList(
+                newsList = (viewModel.homeUiState.value as HomeScreenUiState.Success).news,
+                modifier = modifier
+            )
+        }
+    }
 }
 
 @Composable

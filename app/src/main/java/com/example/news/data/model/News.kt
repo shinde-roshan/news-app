@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 
 data class News(
     val source: NewsSource?,
-    val title: String?,
+    var title: String?,
     val author: String?,
     val description: String?,
     val content: String?,

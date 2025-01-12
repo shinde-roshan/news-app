@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -36,6 +37,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.news.R
 import com.example.news.data.model.News
 import com.example.news.network.NewsApi.newsCategories
@@ -128,19 +131,25 @@ fun NewsRow(
                 horizontalAlignment = Alignment.CenterHorizontally
             )
             {
-                Image(
-                    painter = painterResource(R.drawable.ic_broken_img),
+                AsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data(news.headerImgUrl)
+                        .crossfade(true)
+                        .build(),
+                    placeholder = painterResource(R.drawable.loading_img),
+                    error = painterResource(R.drawable.ic_broken_img),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .width(dimensionResource(R.dimen.dp_72))
                         .height(dimensionResource(R.dimen.dp_72))
+                        .clip(MaterialTheme.shapes.medium)
                 )
             }
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .padding(start = dimensionResource(R.dimen.dp_4)),
+                    .padding(start = dimensionResource(R.dimen.dp_8)),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {

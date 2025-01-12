@@ -28,4 +28,14 @@ object NewsApi {
     val client: NewsApiService by lazy {
         retrofit.create(NewsApiService::class.java)
     }
+
+    val newsCategories = mapOf(
+        "business" to "Business",
+        "entertainment" to "Entertainment",
+        "general" to "General",
+        "health" to "Health",
+        "science" to "Science",
+        "sports" to "Sports",
+        "technology" to "Technology"
+    )
 }

@@ -1,6 +1,7 @@
 package com.example.news.ui.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,9 +13,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.news.R
 import com.example.news.data.model.News
+import com.example.news.network.NewsApi.newsCategories
 import com.example.news.ui.theme.NewsTheme
 
 @Composable
@@ -37,27 +42,42 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     val viewModel: HomeScreenViewModel = viewModel()
-    when (viewModel.homeScreenDataState.value) {
-        HomeScreenDataState.Loading -> {
-            LoadingScreen(modifier = Modifier.fillMaxSize())
-        }
 
-        is HomeScreenDataState.Error -> {
-            ErrorScreen(
-                msg = (viewModel.homeScreenDataState.value as HomeScreenDataState.Error).msg,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-
-        is HomeScreenDataState.Success -> {
-            val newsList = (viewModel.homeScreenDataState.value as HomeScreenDataState.Success).news
-            if (newsList.isEmpty()) {
-                EmptyScreen(modifier = Modifier.fillMaxSize())
-            } else {
-                NewsList(
-                    newsList = newsList,
-                    modifier = modifier
+    Column(
+        modifier = modifier,
+    ) {
+        Row(
+            Modifier.horizontalScroll(rememberScrollState())
+        ) {
+            newsCategories.forEach { category ->
+                OutlineToggleButton(
+                    option = category,
+                    isSelected = viewModel.homeScreenUiState.value.selectedCategory == category.key,
+                    onClick = { viewModel.onCategorySelected(category.key) }
                 )
+            }
+        }
+        when (viewModel.homeScreenDataState.value) {
+            HomeScreenDataState.Loading -> {
+                LoadingScreen(modifier = Modifier.fillMaxSize())
+            }
+
+            is HomeScreenDataState.Error -> {
+                ErrorScreen(
+                    msg = (viewModel.homeScreenDataState.value as HomeScreenDataState.Error).msg,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+
+            is HomeScreenDataState.Success -> {
+                val newsList = (viewModel.homeScreenDataState.value as HomeScreenDataState.Success).news
+                if (newsList.isEmpty()) {
+                    EmptyScreen(modifier = Modifier.fillMaxSize())
+                } else {
+                    NewsList(
+                        newsList = newsList
+                    )
+                }
             }
         }
     }
@@ -192,6 +212,28 @@ fun EmptyScreen(modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.titleSmall,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(dimensionResource(R.dimen.dp_8))
+        )
+    }
+}
+
+@Composable
+fun OutlineToggleButton(
+    option: Map.Entry<String, String>,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    OutlinedButton(
+        onClick = onClick,
+        shape = MaterialTheme.shapes.large,
+        colors = ButtonDefaults.outlinedButtonColors().copy(
+            contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+            containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
+        ),
+        modifier = Modifier.padding(dimensionResource(R.dimen.dp_8))
+    ) {
+        Text(
+            text = option.value,
+            style = MaterialTheme.typography.bodySmall,
         )
     }
 }

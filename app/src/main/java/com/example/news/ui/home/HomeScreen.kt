@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -101,7 +102,9 @@ fun NewsList(
         items(newsList) { news ->
             NewsRow(
                 news,
-                modifier = Modifier.padding(dimensionResource(R.dimen.dp_8))
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(dimensionResource(R.dimen.dp_8))
             )
         }
     }
@@ -121,16 +124,17 @@ fun NewsRow(
                 )
             }
     ) {
-        Row(
+        Column (
             modifier = modifier
-                .padding(dimensionResource(R.dimen.dp_8))
+                .padding(
+                    horizontal = dimensionResource(R.dimen.dp_8),
+                    vertical = dimensionResource(R.dimen.dp_12)
+                )
         ) {
-            Column(
-                modifier = Modifier.fillMaxHeight(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            )
-            {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 AsyncImage(
                     model = ImageRequest.Builder(context)
                         .data(news.headerImgUrl)
@@ -141,34 +145,29 @@ fun NewsRow(
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .width(dimensionResource(R.dimen.dp_72))
-                        .height(dimensionResource(R.dimen.dp_72))
+                        .width(dimensionResource(R.dimen.dp_88))
+                        .height(dimensionResource(R.dimen.dp_88))
                         .clip(MaterialTheme.shapes.medium)
                 )
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(start = dimensionResource(R.dimen.dp_8)),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
                 Text(
                     text = news.title ?: "",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        lineHeight = dimensionResource(R.dimen.dp_20).value.sp
-                    ),
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = news.content ?: "",
-                    style = MaterialTheme.typography.bodySmall,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(top = dimensionResource(R.dimen.dp_4))
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(start = dimensionResource(R.dimen.dp_8))
                 )
             }
+            Text(
+                text = news.source?.name ?: "",
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                        alpha = 0.5f
+                    )
+                ),
+                modifier = Modifier
+                    .padding(start = dimensionResource(R.dimen.dp_8))
+                    .align(Alignment.End)
+            )
         }
     }
 

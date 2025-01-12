@@ -2,9 +2,11 @@
 <resources>
     <dimen name="dp_4">4.dp</dimen>
     <dimen name="dp_8">8.dp</dimen>
+    <dimen name="dp_12">12.dp</dimen>
     <dimen name="dp_16">16.dp</dimen>
     <dimen name="dp_20">20.dp</dimen>
     <dimen name="dp_36">36.dp</dimen>
     <dimen name="dp_60">60.dp</dimen>
     <dimen name="dp_72">72.dp</dimen>
+    <dimen name="dp_88">88.dp</dimen>
 </resources>

@@ -10,9 +10,9 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 
 class HomeScreenViewModel(private val newsRepository: NewsRepository = NewsRepository()): ViewModel() {
-    private var _homeUiState: MutableState<HomeScreenUiState> =
-        mutableStateOf(HomeScreenUiState.Loading)
-    val homeUiState: MutableState<HomeScreenUiState> = _homeUiState
+    private var _homeScreenDataState: MutableState<HomeScreenDataState> =
+        mutableStateOf(HomeScreenDataState.Loading)
+    val homeScreenDataState: MutableState<HomeScreenDataState> = _homeScreenDataState
 
     init {
         getNewsHeadlines()
@@ -22,11 +22,11 @@ class HomeScreenViewModel(private val newsRepository: NewsRepository = NewsRepos
         viewModelScope.launch {
             try {
                 val listResult = newsRepository.getSampleNews("sports")
-                _homeUiState.value = HomeScreenUiState.Success(listResult)
+                _homeScreenDataState.value = HomeScreenDataState.Success(listResult)
             } catch (e: IOException) {
-                _homeUiState.value = HomeScreenUiState.Error(e.message.toString())
+                _homeScreenDataState.value = HomeScreenDataState.Error(e.message.toString())
             } catch (e: HttpException) {
-                _homeUiState.value = HomeScreenUiState.Error(e.message.toString())
+                _homeScreenDataState.value = HomeScreenDataState.Error(e.message.toString())
             }
         }
     }

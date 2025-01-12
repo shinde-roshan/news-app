@@ -37,20 +37,20 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     val viewModel: HomeScreenViewModel = viewModel()
-    when (viewModel.homeUiState.value) {
-        HomeScreenUiState.Loading -> {
+    when (viewModel.homeScreenDataState.value) {
+        HomeScreenDataState.Loading -> {
             LoadingScreen(modifier = Modifier.fillMaxSize())
         }
 
-        is HomeScreenUiState.Error -> {
+        is HomeScreenDataState.Error -> {
             ErrorScreen(
-                msg = (viewModel.homeUiState.value as HomeScreenUiState.Error).msg,
+                msg = (viewModel.homeScreenDataState.value as HomeScreenDataState.Error).msg,
                 modifier = Modifier.fillMaxSize()
             )
         }
 
-        is HomeScreenUiState.Success -> {
-            val newsList = (viewModel.homeUiState.value as HomeScreenUiState.Success).news
+        is HomeScreenDataState.Success -> {
+            val newsList = (viewModel.homeScreenDataState.value as HomeScreenDataState.Success).news
             if (newsList.isEmpty()) {
                 EmptyScreen(modifier = Modifier.fillMaxSize())
             } else {

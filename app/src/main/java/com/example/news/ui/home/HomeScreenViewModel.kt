@@ -50,6 +50,9 @@ class HomeScreenViewModel(
         _homeScreenUiState.value = _homeScreenUiState.value.copy(
             selectedCategory = category
         )
+        viewModelScope.launch {
+            userPreferenceRepository.setNewsCategory(category)
+        }
         getNewsHeadlines()
     }
 

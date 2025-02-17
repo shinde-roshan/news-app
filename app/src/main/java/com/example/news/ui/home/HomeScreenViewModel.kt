@@ -3,15 +3,23 @@ package com.example.news.ui.home
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import coil.network.HttpException
+import com.example.news.NewsApplication
 import com.example.news.data.repository.NewsRepository
+import com.example.news.data.repository.UserPreferenceRepository
 import com.example.news.network.NewsApi.newsCategories
 import kotlinx.coroutines.launch
 import java.io.IOException
 
-class HomeScreenViewModel(private val newsRepository: NewsRepository = NewsRepository()) :
-    ViewModel() {
+class HomeScreenViewModel(
+    private val newsRepository: NewsRepository,
+    private val userPreferenceRepository: UserPreferenceRepository
+) : ViewModel() {
     private var _homeScreenDataState: MutableState<HomeScreenDataState> =
         mutableStateOf(HomeScreenDataState.Loading)
     val homeScreenDataState: MutableState<HomeScreenDataState> = _homeScreenDataState
@@ -43,5 +51,17 @@ class HomeScreenViewModel(private val newsRepository: NewsRepository = NewsRepos
             selectedCategory = category
         )
         getNewsHeadlines()
+    }
+
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = (this[APPLICATION_KEY] as NewsApplication)
+                HomeScreenViewModel(
+                    newsRepository = application.newsRepository,
+                    userPreferenceRepository = application.userPreferenceRepository
+                )
+            }
+        }
     }
 }

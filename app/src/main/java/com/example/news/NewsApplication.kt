@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.news.data.repository.NewsRepository
 import com.example.news.data.repository.UserPreferenceRepository
 
 private const val NEWS_APP_PREFERENCES_NAME = "news_app_preferences"
@@ -13,10 +14,12 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
 )
 
 class NewsApplication: Application() {
+    lateinit var newsRepository: NewsRepository
     lateinit var userPreferenceRepository: UserPreferenceRepository
 
     override fun onCreate() {
         super.onCreate()
+        newsRepository = NewsRepository()
         userPreferenceRepository = UserPreferenceRepository(dataStore = dataStore)
     }
 }

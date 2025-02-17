@@ -34,9 +34,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -49,7 +47,7 @@ import com.example.news.ui.theme.NewsTheme
 fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
-    val viewModel: HomeScreenViewModel = viewModel()
+    val viewModel: HomeScreenViewModel = viewModel(factory = HomeScreenViewModel.Factory)
 
     Column(
         modifier = modifier,

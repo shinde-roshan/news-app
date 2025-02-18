@@ -25,12 +25,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -51,18 +58,39 @@ fun HomeScreen(
 ) {
     val viewModel: HomeScreenViewModel = viewModel(factory = HomeScreenViewModel.Factory)
     val uiState by viewModel.homeScreenUiState.collectAsState()
+    var selectedCategoryIndex by remember { mutableIntStateOf(0) }
+    selectedCategoryIndex = newsCategories.keys.indexOf(uiState.selectedCategory)
+    var hasScrolled by remember { mutableStateOf(false) }
+    val categoryScrollState = rememberScrollState()
+    val categoryButtonWidths = remember { mutableStateListOf<Int>() }
+
+    LaunchedEffect(selectedCategoryIndex) {
+        if (!hasScrolled && selectedCategoryIndex != 0)
+        {
+            val offset = categoryButtonWidths.take(selectedCategoryIndex).sum()
+            categoryScrollState.animateScrollTo(offset)
+            hasScrolled = true
+        }
+    }
 
     Column(
         modifier = modifier,
     ) {
         Row(
-            Modifier.horizontalScroll(rememberScrollState())
+            Modifier.horizontalScroll(categoryScrollState)
         ) {
             newsCategories.forEach { category ->
                 OutlineToggleButton(
                     option = category,
                     isSelected = uiState.selectedCategory == category.key,
-                    onClick = { viewModel.onCategorySelected(category.key) }
+                    onClick = { viewModel.onCategorySelected(category.key) },
+                    modifier = if (selectedCategoryIndex != 0) {
+                        Modifier.onGloballyPositioned { coordinates ->
+                            if (categoryButtonWidths.size <= selectedCategoryIndex) {
+                                categoryButtonWidths.add(coordinates.size.width)
+                            }
+                        }
+                    } else Modifier
                 )
             }
         }
@@ -241,6 +269,7 @@ fun EmptyScreen(modifier: Modifier = Modifier) {
 fun OutlineToggleButton(
     option: Map.Entry<String, String>,
     isSelected: Boolean,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
     OutlinedButton(
@@ -250,7 +279,7 @@ fun OutlineToggleButton(
             contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
             containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
         ),
-        modifier = Modifier.padding(dimensionResource(R.dimen.dp_8))
+        modifier = modifier.padding(dimensionResource(R.dimen.dp_8))
     ) {
         Text(
             text = option.value,

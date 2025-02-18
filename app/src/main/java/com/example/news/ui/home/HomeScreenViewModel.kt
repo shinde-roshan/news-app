@@ -13,6 +13,10 @@ import com.example.news.NewsApplication
 import com.example.news.data.repository.NewsRepository
 import com.example.news.data.repository.UserPreferenceRepository
 import com.example.news.network.NewsApi.newsCategories
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -24,19 +28,29 @@ class HomeScreenViewModel(
         mutableStateOf(HomeScreenDataState.Loading)
     val homeScreenDataState: MutableState<HomeScreenDataState> = _homeScreenDataState
 
-    private var _homeScreenUiState: MutableState<HomeScreenUiState> =
-        mutableStateOf(HomeScreenUiState(newsCategories.keys.first()))
-    val homeScreenUiState: MutableState<HomeScreenUiState> = _homeScreenUiState
+    private var _homeScreenUiState: StateFlow<HomeScreenUiState> =
+        userPreferenceRepository.newsCategory.map { newsCategory ->
+            HomeScreenUiState(newsCategory)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = HomeScreenUiState(newsCategories.keys.first())
+        )
+    val homeScreenUiState: StateFlow<HomeScreenUiState> = _homeScreenUiState
 
     init {
-        getNewsHeadlines()
+        viewModelScope.launch {
+            _homeScreenUiState.collect {
+                getNewsHeadlines(it.selectedCategory)
+            }
+        }
     }
 
-    fun getNewsHeadlines() {
+    private fun getNewsHeadlines(category: String) {
         viewModelScope.launch {
             try {
                 val listResult =
-                    newsRepository.getSampleNews(_homeScreenUiState.value.selectedCategory)
+                    newsRepository.getSampleNews(category)
                 _homeScreenDataState.value = HomeScreenDataState.Success(listResult)
             } catch (e: IOException) {
                 _homeScreenDataState.value = HomeScreenDataState.Error(e.message.toString())
@@ -47,13 +61,9 @@ class HomeScreenViewModel(
     }
 
     fun onCategorySelected(category: String) {
-        _homeScreenUiState.value = _homeScreenUiState.value.copy(
-            selectedCategory = category
-        )
         viewModelScope.launch {
             userPreferenceRepository.setNewsCategory(category)
         }
-        getNewsHeadlines()
     }
 
     companion object {

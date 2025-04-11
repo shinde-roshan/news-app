@@ -20,3 +20,16 @@ The app retrieves news data from the free [News API](https://saurav.tech/NewsAPI
 - **Moshi**: A modern JSON library used to parse the data from the REST API.
 - **Coil**: Efficiently loading images (like article thumbnails) into the UI with Coil, reducing memory usage and improving performance.
 
+## Screenshots
+<p align="center">
+  <img src="assets/01.png" width="150" />&nbsp;&nbsp;
+  <img src="assets/02.png" width="150" />&nbsp;&nbsp;
+  <img src="assets/03.png" width="150" />&nbsp;&nbsp;
+  <img src="assets/04.png" width="150" />
+</p>
+
+<p align="center">
+  <img src="assets/05.png" width="150" />&nbsp;&nbsp;
+  <img src="assets/06.png" width="150" />&nbsp;&nbsp;
+  <img src="assets/07.png" width="150" />
+</p>
